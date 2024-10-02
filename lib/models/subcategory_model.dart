@@ -1,7 +1,7 @@
 class Subcategory {
   final String category;
   final String subcategory;
-  final int id; // Ensure id is an int
+  final int id;
   final List<String> images;
 
   Subcategory({
@@ -11,7 +11,6 @@ class Subcategory {
     required this.images,
   });
 
-  // Convert the Subcategory instance to a Map
   Map<String, dynamic> toMap() {
     return {
       'category': category,
@@ -21,13 +20,37 @@ class Subcategory {
     };
   }
 
-  // Create a Subcategory instance from a Map
   factory Subcategory.fromMap(Map<String, dynamic> map) {
     return Subcategory(
-      category: map['category'],
-      subcategory: map['subcategory'],
+      category: map['category'] ?? '',
+      subcategory: map['subcategory'] ?? '',
       id: map['id'] ?? -1,
       images: List<String>.from(map['images'] ?? []),
+    );
+  }
+}
+
+class Category {
+  final String name;
+  final List<Subcategory> subcategories;
+
+  Category({
+    required this.name,
+    required this.subcategories,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'subcategories': subcategories.map((subcategory) => subcategory.toMap()).toList(),
+    };
+  }
+  factory Category.fromMap(Map<String, dynamic> map) {
+    return Category(
+      name: map['name'] ?? '',
+      subcategories: (map['subcategories'] as List<dynamic>)
+          .map((subcategoryMap) => Subcategory.fromMap(subcategoryMap))
+          .toList(),
     );
   }
 }

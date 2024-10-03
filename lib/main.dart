@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'viewmodels/subcategory_view_model.dart';
 import 'viewmodels/theme_view_model.dart';
-import 'viewmodels/image_view_model.dart'; // Import the ImageViewModel
 import 'views/home_page.dart';
 import 'package:google_api_availability/google_api_availability.dart';
 
@@ -41,13 +40,10 @@ class MyApp extends StatelessWidget {
         builder: (context, themeViewModel, child) {
           return ChangeNotifierProvider<SubcategoryViewModel>(
             create: (context) => SubcategoryViewModel(),
-            child: ChangeNotifierProvider<ImageViewModel>( // Add ImageViewModel Provider here
-              create: (context) => ImageViewModel(),
-              child: MaterialApp(
-                title: 'Wallpaper App',
-                theme: themeViewModel.currentTheme,
-                home: HomePage(),
-              ),
+            child: MaterialApp(
+              title: 'Wallpaper App',
+              theme: themeViewModel.currentTheme,
+              home: HomePage(),
             ),
           );
         },

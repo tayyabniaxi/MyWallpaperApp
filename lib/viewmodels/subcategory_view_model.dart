@@ -9,13 +9,17 @@ class SubcategoryViewModel extends ChangeNotifier {
   List<String> _imageUrls = [];
   bool _isLoading = false;
   String? _errorMessage;
+  int _currentPage = 0;
+  static const int _pageSize = 5; // Adjust the page size as needed
 
   List<String> get imageUrls => _imageUrls;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // Fetch images directly from the Firestore subcategory document
+  // Fetch images based on page
   Future<void> fetchSubcategoryImages(String categoryId, String subcategoryId) async {
+    if (_isLoading) return; // Prevent multiple calls
+
     _setLoading(true);
     clearError();
 
@@ -24,11 +28,8 @@ class SubcategoryViewModel extends ChangeNotifier {
       await _db.collection('categories').doc(categoryId).collection('subcategories').doc(subcategoryId).get();
 
       if (document.exists) {
-        _imageUrls = List<String>.from(document.data()?['images'] ?? []);
-        if (_imageUrls.isEmpty) {
-          _setError('No images available for $subcategoryId.');
-        }
-        _logger.i('Subcategory images fetched for: $subcategoryId in $categoryId');
+        List<String> allImages = List<String>.from(document.data()?['images'] ?? []);
+        _loadNextChunk(allImages);
       } else {
         _setError('Subcategory not found');
       }
@@ -37,6 +38,16 @@ class SubcategoryViewModel extends ChangeNotifier {
       _logger.e('Error fetching subcategory images: $e');
     } finally {
       _setLoading(false);
+    }
+  }
+
+  void _loadNextChunk(List<String> allImages) {
+    if (_currentPage * _pageSize < allImages.length) {
+      int startIndex = _currentPage * _pageSize;
+      int endIndex = startIndex + _pageSize;
+      _imageUrls.addAll(allImages.sublist(startIndex, endIndex > allImages.length ? allImages.length : endIndex));
+      _currentPage++;
+      notifyListeners();
     }
   }
 

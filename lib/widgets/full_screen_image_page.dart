@@ -30,8 +30,10 @@ class FullScreenImagePage extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: imageUrl,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+              placeholder: (context, url) =>
+                  Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) =>
+                  Center(child: Icon(Icons.error)),
             ),
           ),
           // Button Overlay
@@ -41,8 +43,7 @@ class FullScreenImagePage extends StatelessWidget {
             right: 0,
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              decoration: BoxDecoration(
-              ),
+              decoration: BoxDecoration(),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -75,7 +76,7 @@ class FullScreenImagePage extends StatelessWidget {
                         onPressed: () async {
                           await ImageUtils.downloadImage(context, imageUrl);
                         },
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.download_sharp, color: Colors.white),
@@ -95,7 +96,8 @@ class FullScreenImagePage extends StatelessWidget {
                       onPressed: () async {
                         await ImageUtils.setWallpaper(context, imageUrl);
                       },
-                      child: Text('Set as Wallpaper', style: TextStyle(color: Colors.white)),
+                      child: Text('Set as Wallpaper',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ),
                 ],

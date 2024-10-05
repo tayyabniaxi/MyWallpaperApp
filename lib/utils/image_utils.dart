@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:gal/gal.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
@@ -9,7 +11,8 @@ import 'package:flutter/services.dart';
 class ImageUtils {
   static final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  static Future<void> downloadImage(BuildContext context, String imageUrl) async {
+  static Future<void> downloadImage(
+      BuildContext context, String imageUrl) async {
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
@@ -21,40 +24,54 @@ class ImageUtils {
         final bytes = response.bodyBytes;
 
         final directory = await getExternalStorageDirectory();
-        final picturesDir = Directory('${directory!.parent.parent.parent.parent.path}/Pictures');
+        final picturesDir = Directory('${directory!.path}/Pictures');
         if (!picturesDir.existsSync()) {
           picturesDir.createSync(recursive: true);
         }
 
-        String fileName = 'downloaded_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        String fileName =
+            'downloaded_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
         String filePath = '${picturesDir.path}/$fileName';
 
         final file = File(filePath);
+
         await file.writeAsBytes(bytes);
-        _showSnackbar(context, 'Your image is saved');
-        await _refreshGallery(filePath);
+
+        // save the image to gallery and then show the snackbar
+        await Gal.putImage(filePath).then(
+          (value) {
+            _showSnackbar(context, 'Your image is saved');
+          },
+        );
       } catch (e) {
         _showSnackbar(context, 'Failed to download image: $e');
       }
     } else {
-      _showSnackbar(context, 'Storage permission is required to download images');
+      _showSnackbar(
+          context, 'Storage permission is required to download images');
     }
   }
 
-  static Future<void> toggleFavorite(BuildContext context, String imageUrl) async {
-    final favRef = firestore.collection('userFavorites').where('url', isEqualTo: imageUrl);
+  static Future<void> toggleFavorite(
+      BuildContext context, String imageUrl) async {
+    final favRef =
+        firestore.collection('userFavorites').where('url', isEqualTo: imageUrl);
     final snapshot = await favRef.get();
 
     if (snapshot.docs.isEmpty) {
       firestore.collection('userFavorites').add({'url': imageUrl});
       _showSnackbar(context, 'Image added to favorites');
     } else {
-      firestore.collection('userFavorites').doc(snapshot.docs.first.id).delete();
+      firestore
+          .collection('userFavorites')
+          .doc(snapshot.docs.first.id)
+          .delete();
       _showSnackbar(context, 'Removed from favorites');
     }
   }
 
-  static Future<void> setWallpaper(BuildContext context, String imageUrl) async {
+  static Future<void> setWallpaper(
+      BuildContext context, String imageUrl) async {
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
@@ -66,7 +83,8 @@ class ImageUtils {
         final bytes = response.bodyBytes;
 
         final directory = await getExternalStorageDirectory();
-        final picturesDir = Directory('${directory!.parent.parent.parent.parent.path}/Pictures');
+        final picturesDir = Directory(
+            '${directory!.parent.parent.parent.parent.path}/Pictures');
         if (!picturesDir.existsSync()) {
           picturesDir.createSync(recursive: true);
         }
@@ -77,7 +95,6 @@ class ImageUtils {
 
         // Directly set the wallpaper using a platform channel
         _setWallpaperDirectly(context, filePath);
-
       } catch (e) {
         _showSnackbar(context, 'Failed to set wallpaper: $e');
       }
@@ -89,7 +106,13 @@ class ImageUtils {
   static Future<void> _refreshGallery(String filePath) async {
     if (Platform.isAndroid) {
       try {
-        await Process.run('am', ['broadcast', '-a', 'android.intent.action.MEDIA_SCANNER_SCAN_FILE', '-d', 'file://$filePath']);
+        await Process.run('am', [
+          'broadcast',
+          '-a',
+          'android.intent.action.MEDIA_SCANNER_SCAN_FILE',
+          '-d',
+          'file://$filePath'
+        ]);
       } catch (e) {
         print('Error refreshing gallery: $e');
       }
@@ -108,12 +131,15 @@ class ImageUtils {
     );
   }
 
-  static void _setWallpaperDirectly(BuildContext context, String filePath) async {
+  static void _setWallpaperDirectly(
+      BuildContext context, String filePath) async {
     try {
       final fileUri = Uri.file(filePath);
 
-      final methodChannel = MethodChannel('com.example.myapp/wallpaper');
-      await methodChannel.invokeMethod('setWallpaperDirectly', {"filePath": fileUri.toString()});
+      final methodChannel =
+          MethodChannel('com.example.my_wallpaper_app/wallpaper');
+      await methodChannel
+          .invokeMethod('setWallpaperDirectly', {"filePath": filePath});
 
       _showSnackbar(context, 'Wallpaper set successfully');
     } catch (e) {

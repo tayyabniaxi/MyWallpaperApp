@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gal/gal.dart';
-
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
@@ -124,9 +123,9 @@ class ImageUtils {
       SnackBar(
         content: Center(child: Text(message)),
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 75.0),
+        margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 75.0),
         backgroundColor: const Color(0xFF7B39FD),
-        duration: Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 1000),
       ),
     );
   }
@@ -134,9 +133,7 @@ class ImageUtils {
   static void _setWallpaperDirectly(
       BuildContext context, String filePath) async {
     try {
-      final fileUri = Uri.file(filePath);
-
-      final methodChannel =
+      const methodChannel =
           MethodChannel('com.example.my_wallpaper_app/wallpaper');
       await methodChannel
           .invokeMethod('setWallpaperDirectly', {"filePath": filePath});

@@ -47,7 +47,6 @@ dependencies:
   logger: ^2.4.0
   google_api_availability: ^5.0.0
   gal: ^2.3.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

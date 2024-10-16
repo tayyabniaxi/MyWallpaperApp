@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/subcategory_view_model.dart';
@@ -11,7 +10,9 @@ class SubcategoryPage extends StatefulWidget {
 
   SubcategoryPage({
     required this.category,
-    required this.subcategory, required List imageUrls, required List isFavoriteList,
+    required this.subcategory,
+    required List imageUrls,
+    required List isFavoriteList,
   });
 
   @override
@@ -45,18 +46,22 @@ class _SubcategoryPageState extends State<SubcategoryPage> {
 
           return NotificationListener<ScrollNotification>(
             onNotification: (scrollNotification) {
-              if (!viewModel.isLoading && scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent) {
+              if (!viewModel.isLoading &&
+                  scrollNotification.metrics.pixels ==
+                      scrollNotification.metrics.maxScrollExtent) {
                 // Load more images when reaching the bottom for the selected subcategory
-                _viewModel.fetchSubcategoryImages(widget.category, widget.subcategory);
+                _viewModel.fetchSubcategoryImages(
+                    widget.category, widget.subcategory);
               }
               return false;
             },
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Two images per row
-                childAspectRatio: 0.5, // Aspect ratio for half the screen width
+                crossAxisCount: 2,
+                childAspectRatio: 0.5,
               ),
-              itemCount: viewModel.imageUrls.length + (viewModel.isLoading ? 1 : 0), // Add a loader at the end
+              itemCount:
+                  viewModel.imageUrls.length + (viewModel.isLoading ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == viewModel.imageUrls.length) {
                   return Center(child: CircularProgressIndicator());
@@ -78,7 +83,8 @@ class _SubcategoryPageState extends State<SubcategoryPage> {
                   child: CachedNetworkImage(
                     imageUrl: viewModel.imageUrls[index],
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                    placeholder: (context, url) =>
+                        Center(child: CircularProgressIndicator()),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 );

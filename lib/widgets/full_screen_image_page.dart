@@ -19,8 +19,6 @@ class FullScreenImagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    final themeViewModel = Provider.of<ThemeViewModel>(context);
-
     return Scaffold(
       body: Stack(
         children: [
@@ -34,6 +32,17 @@ class FullScreenImagePage extends StatelessWidget {
                   Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) =>
                   Center(child: Icon(Icons.error)),
+            ),
+          ),
+          // Back Button
+          Positioned(
+            top: 40, // Adjust this value as needed
+            left: 20, // Adjust this value as needed
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white, size: 30),
+              onPressed: () {
+                Navigator.pop(context); // Go back to the previous screen
+              },
             ),
           ),
           // Button Overlay

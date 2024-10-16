@@ -5,24 +5,24 @@
 // import '../widgets/full_screen_image_page.dart';
 // import 'package:provider/provider.dart';
 // import '../viewmodels/theme_view_model.dart';
-//
+
 // class HomeContent extends StatefulWidget {
 //   @override
 //   State<HomeContent> createState() => _HomeContentState();
 // }
-//
+
 // class _HomeContentState extends State<HomeContent> {
 //   String selectedCategory = 'Popular';
 //   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-//
+
 //   final Map<String, List<String>> cachedImages = {};
-//
+
 //   Future<List<String>> _fetchCategoryImageUrls(String category) async {
-//
+
 //     if (cachedImages.containsKey(category)) {
 //       return cachedImages[category]!;
 //     }
-//
+
 //     final doc = await firestore.collection('categories').doc(category).get();
 //     List<String> imageUrls = [];
 //     if (doc.exists) {
@@ -31,24 +31,24 @@
 //     }
 //     return imageUrls;
 //   }
-//
+
 //   Future<bool> _isImageFavorite(String url) async {
 //     final favRef = firestore.collection('userFavorites').where('url', isEqualTo: url);
 //     final snapshot = await favRef.get();
 //     return snapshot.docs.isNotEmpty;
 //   }
-//
+
 //   @override
 //   Widget build(BuildContext context) {
 //     final themeViewModel = Provider.of<ThemeViewModel>(context);
-//
+
 //     Color selectedColor = themeViewModel.isDarkMode ? AppColors.purpleColor : AppColors.purpleColor;
 //     Color defaultColor = themeViewModel.isDarkMode ? AppColors.lightPurpleColor : AppColors.lightPurpleColor;
 //     Color wallpaperColor = themeViewModel.isDarkMode ? Colors.white : Colors.black;
 //     Color wallpaperTextColor = themeViewModel.isDarkMode ? Colors.black : Colors.white;
-//
+
 //     return Scaffold(
-//
+
 //       body: Column(
 //         children: [
 //           SingleChildScrollView(
@@ -110,7 +110,7 @@
 //                 } else {
 //                   final imageUrls = snapshot.data!;
 //                   return
-//
+
 //                     GridView.builder(
 //                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
 //                       crossAxisCount: 2,
@@ -177,7 +177,7 @@ class _HomeContentState extends State<HomeContent> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   final Map<String, List<String>> cachedImages = {};
-  final int pageSize = 10;
+  final int pageSize = 4;
   List<String> currentImages = [];
   bool isLoading = false;
   bool hasMore = true;
@@ -314,6 +314,7 @@ class _HomeContentState extends State<HomeContent> {
                   childAspectRatio: 0.5,
                 ),
                 itemCount: currentImages.length + (isLoading ? 1 : 0),
+                // itemCount: 50 + (isLoading ? 1 : 0),
                 itemBuilder: (context, index) {
                   if (index == currentImages.length) {
                     return Center(
@@ -324,7 +325,9 @@ class _HomeContentState extends State<HomeContent> {
                       ),
                     );
                   }
-                  return GestureDetector(
+                  return 
+                  
+                  GestureDetector(
                     onTap: () async {
                       bool isFavorite = await _isImageFavorite(currentImages[index]);
                       Navigator.push(
@@ -351,6 +354,8 @@ class _HomeContentState extends State<HomeContent> {
                       errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
                   );
+              
+              
                 },
               ),
             ),

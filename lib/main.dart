@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:my_wallpaper_app/provider/favorite_toggle.dart';
 import 'package:provider/provider.dart';
 import 'viewmodels/subcategory_view_model.dart';
 import 'viewmodels/theme_view_model.dart';
@@ -15,7 +16,11 @@ void main() async {
     print('Firebase initialization error: $e');
   }
 
-  runApp(MyApp());
+  runApp(MultiProvider(
+    providers: [
+       ChangeNotifierProvider(create: (_) => FavoriteProvider()),
+    ],
+    child: MyApp()));
 
   await checkGooglePlayServicesAvailability();
 }
@@ -34,7 +39,9 @@ Future<void> checkGooglePlayServicesAvailability() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    
     return ChangeNotifierProvider<ThemeViewModel>(
+      
       create: (context) => ThemeViewModel(),
       child: Consumer<ThemeViewModel>(
         builder: (context, themeViewModel, child) {

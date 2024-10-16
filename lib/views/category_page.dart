@@ -119,6 +119,45 @@ class _CategoryPageState extends State<CategoryPage> {
 
   String selectedCategory = 'Technology';
 
+
+  final int itemsPerPage = 3; 
+  int currentPage = 0; // Current page
+  List<String> displayedSubCategories = []; // List to hold currently displayed items
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMoreItems(); // Load the initial items
+    _scrollController = ScrollController()
+      ..addListener(() {
+        if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+          _loadMoreItems(); // Load more items when scrolled to the bottom
+        }
+      });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _loadMoreItems() {
+    if (currentPage * itemsPerPage >= subCategories[selectedCategory]!.length) {
+      return; // No more items to load
+    }
+
+    final endIndex = (currentPage + 1) * itemsPerPage;
+    displayedSubCategories.addAll(subCategories[selectedCategory]!.sublist(
+      currentPage * itemsPerPage,
+      endIndex > subCategories[selectedCategory]!.length
+          ? subCategories[selectedCategory]!.length
+          : endIndex,
+    ));
+    currentPage++;
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
@@ -311,39 +350,42 @@ class _CategoryPageState extends State<CategoryPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
+
                   Expanded(
                     child: ListView.builder(
-                      itemCount: subCategories[selectedCategory]!.length,
+                        controller: _scrollController,
+      itemCount: displayedSubCategories.length,
+                      // itemCount: subCategories[selectedCategory]!.length,
                       itemBuilder: (context, index) {
-                        final subCategory =
-                        subCategories[selectedCategory]![index];
+                        // final subCategory =
+                        // subCategories[selectedCategory]![index];
+                        final subCategory = displayedSubCategories[index];
                         return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(subCategory,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => SubcategoryPage(
-                                            category: selectedCategory,
-                                            subcategory: subCategory,
-                                            imageUrls: [],
-                                            isFavoriteList: [],
-                                          ),
-                                        ),
-                                      );
-                                    },
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(subCategory,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18)),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SubcategoryPage(
+                            category: selectedCategory,
+                            subcategory: subCategory,
+                            imageUrls: [],
+                            isFavoriteList: [],
+                          ),
+                        ),
+                      );
+                    },
                                     child: const Text('View All',
                                         style: TextStyle(color: Colors.blue)),
                                   ),
@@ -374,7 +416,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                     final images = snapshot.data!;
                                     return ListView.builder(
                                       scrollDirection: Axis.horizontal,
-                                      itemCount: images.length,
+                                      itemCount: 5,
                                       itemBuilder: (context, imgIndex) {
                                         return Container(
                                           width: 120,
@@ -401,6 +443,8 @@ class _CategoryPageState extends State<CategoryPage> {
                       },
                     ),
                   ),
+               
+               
                 ],
               ),
             ),
@@ -408,6 +452,8 @@ class _CategoryPageState extends State<CategoryPage> {
       ),
     );
   }
+
+
 
   Future<List<String>> _fetchSubcategoryImages(
       String category, String subcategory) async {
@@ -424,3 +470,5 @@ class _CategoryPageState extends State<CategoryPage> {
     return [];
   }
 }
+
+

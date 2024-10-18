@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:my_wallpaper_app/assets/app_assets.dart';
 import 'package:my_wallpaper_app/views/home_content.dart';
 import 'package:my_wallpaper_app/views/category_page.dart';
@@ -44,17 +46,15 @@ class _HomePageState extends State<HomePage> {
         toolbarHeight: 60,
         leadingWidth: 150,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 20.0, top: 15, bottom: 15),
+          padding: const EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
           child: Row(
             children: [
-              SvgPicture.asset(AppIcons.logoIcon,
-                width: 25,
-                height: 25,
-                color: Theme.of(context).iconTheme.color,
-              ),
+             CircleAvatar(
+               backgroundImage: AssetImage(AppImages.applogo2),
+             ),
               const SizedBox(width: 10),
               Text(
-                "Logo",
+                "PixelScape",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Theme.of(context).appBarTheme.foregroundColor ??
                         (isDarkMode ? Colors.white : Colors.black)),

@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:my_wallpaper_app/assets/app_assets.dart';
 import 'package:provider/provider.dart';
@@ -41,47 +43,75 @@ class _FavouritePageState extends State<FavouritePage> {
 
           final favoriteUrls = favoriteDocs.map((doc) => doc['url'] as String).toList();
 
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: StaggeredGridView.countBuilder(
+              // gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              //   crossAxisCount: 2,
+              //   crossAxisSpacing: 4.0,
+              //   mainAxisSpacing: 4.0,
+              // ),
+              // crossAxisCount: 2,
               crossAxisCount: 2,
-              crossAxisSpacing: 4.0,
-              mainAxisSpacing: 4.0,
-            ),
-            itemCount: favoriteUrls.length,
-            itemBuilder: (context, index) {
-              final imageUrl = favoriteUrls[index];
 
-              return Stack(
-                fit: StackFit.expand,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FullScreenImagePage(
-                            imageUrl: imageUrl,
-                            isFavorite: true,
-                            onFavoriteToggle: () {},
+              staggeredTileBuilder: (int index) =>
+                  StaggeredTile.extent(
+                    1,
+                    index.isEven ? 200 : 300,
+                  ),
+              mainAxisSpacing: 4.0,
+              crossAxisSpacing: 4.0,
+              itemCount: favoriteUrls.length,
+              itemBuilder: (context, index) {
+                final imageUrl = favoriteUrls[index];
+
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FullScreenImagePage(
+                              imageUrl: imageUrl,
+                              isFavorite: true,
+                              onFavoriteToggle: () {},
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    child: Image.network(imageUrl, fit: BoxFit.cover),
-                  ),
-                  Positioned(
-                    bottom: 8.0,
-                    right: 8.0,
-                    child: IconButton(
-                      icon: const Icon(Icons.favorite, color: Colors.red),
-                      onPressed: () {
-                        _removeFromFavorites(imageUrl);
+                        );
                       },
+                      child:ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CachedNetworkImage(
+                          imageUrl:imageUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              Container(
+                                color: Colors.grey[300],
+                              ),
+                          errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                        ),
+                      ),
+
+
+
                     ),
-                  ),
-                ],
-              );
-            },
+                    Positioned(
+                      bottom: 8.0,
+                      right: 8.0,
+                      child: IconButton(
+                        icon: const Icon(Icons.favorite, color: Colors.red),
+                        onPressed: () {
+                          _removeFromFavorites(imageUrl);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
           );
         },
       ),

@@ -22,6 +22,8 @@ class AppIcons {
 class AppImages{
   static const baseImagesPath="assets/images/";
   static const firstWallpaper="${baseImagesPath}wallpaper.png";
+  static const applogo2="assets/images/applogo.png";
+  static const applogo="${baseImagesPath}applogo.svg";
 
 
 }

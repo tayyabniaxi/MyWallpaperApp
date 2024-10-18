@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:my_wallpaper_app/theme/app_theme.dart';
+import '../utils/app-color.dart';
 import '../widgets/full_screen_image_page.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/theme_view_model.dart';
@@ -236,12 +237,13 @@ class _HomeContentState extends State<HomeContent> {
   Widget build(BuildContext context) {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
 
-    Color selectedColor = themeViewModel.isDarkMode
-        ? AppColors.purpleColor
-        : AppColors.purpleColor;
-    Color defaultColor = themeViewModel.isDarkMode
-        ? AppColors.lightPurpleColor
-        : AppColors.lightPurpleColor;
+
+    Color categoryColor = themeViewModel.isDarkMode ? Color(0xff4C3D90) : Color(0xffE5D7FF);
+    Color selectedCategoryColor = themeViewModel.isDarkMode ?Color(0xff7B39FD) : AppColor.categoryLightThemeColorselect ;
+    Color subCategoryColor = themeViewModel.isDarkMode ? const Color(0xFF4C3D90)  : Color(0xffF8F5FF);
+
+    Color selectedColor =themeViewModel.isDarkMode ?Color(0xff7B39FD) : AppColor.categoryLightThemeColorselect ;
+    Color defaultColor = themeViewModel.isDarkMode ? Color(0xff4C3D90) : Color(0xffE5D7FF);
     Color wallpaperColor = themeViewModel.isDarkMode ? Colors.white : Colors
         .black;
     Color wallpaperTextColor = themeViewModel.isDarkMode ? Colors.black : Colors
@@ -269,7 +271,7 @@ class _HomeContentState extends State<HomeContent> {
                       }
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10,
+                      padding: const EdgeInsets.symmetric(vertical: 5,
                           horizontal: 10),
                       margin: const EdgeInsets.only(right: 5),
                       decoration: BoxDecoration(

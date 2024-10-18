@@ -3,6 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:my_wallpaper_app/theme/app_theme.dart';
+import 'package:my_wallpaper_app/utils/app-color.dart';
+import 'package:my_wallpaper_app/viewmodels/theme_view_model.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/subcategory_view_model.dart';
 import '../widgets/full_screen_image_page.dart';
@@ -41,6 +44,12 @@ class _SubcategoryPageState extends State<SubcategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeViewModel = Provider.of<ThemeViewModel>(context);
+
+
+    Color categoryColor = themeViewModel.isDarkMode ? AppColor.categorydarkThemeColorselect : Color(0xffE5D7FF);
+    Color selectedCategoryColor = themeViewModel.isDarkMode ?AppColor.lightunSelect : AppColor.categoryLightThemeColorselect ;
+    Color subCategoryColor = themeViewModel.isDarkMode ? const Color(0xFFA375FE)  : Colors.white;
     return Scaffold(
       appBar: AppBar(title:  Text(
         "PixelScape",
@@ -50,54 +59,112 @@ class _SubcategoryPageState extends State<SubcategoryPage> {
       ),),
       body: Column(
         children: [
-          // Horizontal list of subcategories including category name
+
           Container(
             height: 50,
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: widget.subCategories.length + 1, // Include category name
+              itemCount: widget.subCategories.length + 1, // +1 for the category name
               itemBuilder: (context, index) {
-                String displayName;
+                String subCat;
                 if (index == 0) {
-                  displayName = widget.category; // Show category name at first index
+                  subCat = widget.category; // First item is the category name
                 } else {
-                  displayName = widget.subCategories[index - 1]; // Adjust index for subcategories
+                  subCat = widget.subCategories[index - 1]; // Adjust index for subcategories
                 }
 
-                return GestureDetector(
-                  onTap: () {
-                    // Handle tap on category or subcategory
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SubcategoryPage(
-                          category: index == 0 ? widget.category : widget.category,
-                          subcategory: displayName,
-                          imageUrls: [], // Fetch relevant images here if needed
-                          isFavoriteList: [],
-                          subCategories: widget.subCategories,
-                          isViewAll: index == 0, // Pass whether it's View All
+                bool isCategoryName = index == 0;
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: isCategoryName
+                        ? (themeViewModel.isDarkMode ? Colors.white : Colors.black) // Use your existing colors
+                        : const Color(0xFFA375FE), // Color for subcategories
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: isCategoryName
+                      ? Row(
+                    children: [
+                      Text(
+                        subCat,
+                        style:  TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: themeViewModel.isDarkMode ? Colors.black : Colors.white, // Text color for category name
                         ),
                       ),
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8.0), // Space before arrow
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white, // Arrow color
+                          size: 16,
+                        ),
+                      ),
+                    ],
+                  )
+                      : GestureDetector(
+                    onTap: () {
+                      // Handle subcategory tap
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SubcategoryPage(
+                            subCategories: [],
+                            isViewAll: false,
+
+                            category: widget.category,
+                            subcategory: subCat,
+                            imageUrls: [], // Pass the relevant images here
+                            isFavoriteList: [],
+                          ),
+                        ),
+                      );
+                    },
                     child: Text(
-                      displayName,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      subCat,
+                      style:  TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: themeViewModel.isDarkMode ? Colors.black : Colors.white, // Text color for subcategories
+                      ),
                     ),
                   ),
                 );
               },
             ),
           ),
+
+
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 10,vertical: 7),
+             decoration: BoxDecoration(
+               border: Border.all(color: Color(0xffA375FE) , width: 1),
+               color: Color(0xff32305E),
+               borderRadius: BorderRadius.circular(20)
+             ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween ,
+                  children: [
+                    Text("Robots", style: TextStyle(fontSize: 13 , color: Colors.white),),
+                    Text("322 images", style: TextStyle(fontSize: 13 , color: Colors.white),),
+                  ],
+                ),
+              )),
+
+          SizedBox(height: 10,),
+
+
           Expanded(
             child: Consumer<SubcategoryViewModel>(
               builder: (context, viewModel, child) {

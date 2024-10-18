@@ -171,9 +171,9 @@ class _CategoryPageState extends State<CategoryPage> {
   Widget build(BuildContext context) {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
 
-    Color categoryColor = themeViewModel.isDarkMode ? const Color(0xFFE5D7FF)  : AppColors.lighterPurpleColor;
-    Color selectedCategoryColor = themeViewModel.isDarkMode ? const Color(0xFF7B39FD) : const Color(0xFF7B39FD);
-    Color subCategoryColor = themeViewModel.isDarkMode ? const Color(0xFFA375FE)  : Colors.white;
+    Color categoryColor = themeViewModel.isDarkMode ? Color(0xff4C3D90) : Color(0xffE5D7FF);
+    Color selectedCategoryColor = themeViewModel.isDarkMode ?Color(0xff7B39FD) : AppColor.categoryLightThemeColorselect ;
+    Color subCategoryColor = themeViewModel.isDarkMode ? const Color(0xFF4C3D90)  : Color(0xffF8F5FF);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -219,7 +219,7 @@ class _CategoryPageState extends State<CategoryPage> {
                           Text(
                             category,
                             style: TextStyle(
-                              color: textColor,
+                              color: themeViewModel.isDarkMode? Colors.black:Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -286,14 +286,14 @@ class _CategoryPageState extends State<CategoryPage> {
                                 children: [
                                   Icon(
                                     subCategoryIcons[subCategory],
-                                    color: Colors.black,
+                                    color: themeViewModel.isDarkMode?Colors.white:Colors.black,
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
                                     subCategory,
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                                      color: themeViewModel.isDarkMode?Colors.white:Colors.black,
                                     ),
                                   ),
                                 ],
@@ -347,14 +347,14 @@ class _CategoryPageState extends State<CategoryPage> {
                                 children: [
                                   Icon(
                                     subCategoryIcons[subCategory],
-                                    color: Colors.black,
+                                    color: themeViewModel.isDarkMode?Colors.white:Colors.black,
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
                                     subCategory,
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                                      color: themeViewModel.isDarkMode?Colors.white:Colors.black,
                                     ),
                                   ),
                                 ],

@@ -25,7 +25,7 @@ class _HomeContentState extends State<HomeContent> {
   List<String> currentImages = [];
   bool isLoading = false;
   bool hasMore = true;
-  final int pageSize = 4;
+  final int pageSize = 6;
 
   @override
   void initState() {
@@ -85,7 +85,7 @@ class _HomeContentState extends State<HomeContent> {
 
   void _onScroll() {
     if (!isLoading && _scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
+        _scrollController.position.minScrollExtent) {
       _fetchCategoryImageUrls(selectedCategory);
     }
   }
@@ -97,140 +97,6 @@ class _HomeContentState extends State<HomeContent> {
     return snapshot.docs.isNotEmpty;
   }
 
-
-  /*
-  @override
-  Widget build(BuildContext context) {
-    final themeViewModel = Provider.of<ThemeViewModel>(context);
-
-    Color selectedColor = themeViewModel.isDarkMode ? AppColors.purpleColor : AppColors.purpleColor;
-    Color defaultColor = themeViewModel.isDarkMode ? AppColors.lightPurpleColor : AppColors.lightPurpleColor;
-    Color wallpaperColor = themeViewModel.isDarkMode ? Colors.white : Colors.black;
-    Color wallpaperTextColor = themeViewModel.isDarkMode ? Colors.black : Colors.white;
-
-    return Scaffold(
-      body: Column(
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 0.0),
-              child: Row(
-                children: ['Wallpaper', 'Popular', 'Nature', 'Random'].map((category) {
-                  final isSelected = category == selectedCategory;
-                  return GestureDetector(
-                    onTap: () {
-                      if (category != 'Wallpaper') {
-                        setState(() {
-                          selectedCategory = category;
-                          _fetchCategoryImageUrls(category, refresh: true);
-                        });
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      margin: const EdgeInsets.only(right: 5),
-                      decoration: BoxDecoration(
-                        color: category == 'Wallpaper'
-                            ? wallpaperColor
-                            : (isSelected ? selectedColor : defaultColor),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            category,
-                            style: TextStyle(
-                              color: isSelected || category == 'Wallpaper'
-                                  ? wallpaperTextColor
-                                  : Colors.black,
-                            ),
-                          ),
-                          if (category == 'Wallpaper') ...[
-                            const SizedBox(width: 8),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification scrollInfo) {
-                  if (!isLoading && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                    _fetchCategoryImageUrls(selectedCategory);
-                  }
-                  return true;
-                },
-                child: StaggeredGridView.countBuilder(
-                  controller: _scrollController,
-                  crossAxisCount: 2,
-                  itemCount: currentImages.length + (isLoading ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == currentImages.length) {
-                      return const Center(
-                        child: SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
-                    return GestureDetector(
-                      onTap: () async {
-                        bool isFavorite = await _isImageFavorite(currentImages[index]);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FullScreenImagePage(
-                              imageUrl: currentImages[index],
-                              isFavorite: isFavorite,
-                              onFavoriteToggle: () {},
-                            ),
-                          ),
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: CachedNetworkImage(
-                          imageUrl: currentImages[index],
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: Colors.grey[300],
-                          ),
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
-                        ),
-                      ),
-                    );
-                  },
-                  staggeredTileBuilder: (int index) => StaggeredTile.extent(
-                    1,
-                    index.isEven ? 200 : 300,
-                  ),
-                  mainAxisSpacing: 4.0,
-                  crossAxisSpacing: 4.0,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-   */
 
 
   @override
@@ -252,7 +118,6 @@ class _HomeContentState extends State<HomeContent> {
     return Scaffold(
       body: Column(
         children: [
-          // Category Scroll Section
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
@@ -313,7 +178,7 @@ class _HomeContentState extends State<HomeContent> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: isLoading && currentImages.isEmpty
-                  ? Center( // Full-page circular progress indicator
+                  ? const Center(
                 child: CircularProgressIndicator(),
               )
                   : NotificationListener<ScrollNotification>(
@@ -352,6 +217,7 @@ class _HomeContentState extends State<HomeContent> {
                                   imageUrl: currentImages[index],
                                   isFavorite: isFavorite,
                                   onFavoriteToggle: () {},
+                                  image: [],
                                 ),
                           ),
                         );
@@ -386,4 +252,6 @@ class _HomeContentState extends State<HomeContent> {
       ),
     );
   }
+
+
 }

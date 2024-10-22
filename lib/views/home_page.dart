@@ -8,6 +8,7 @@ import 'package:my_wallpaper_app/views/home_content.dart';
 import 'package:my_wallpaper_app/views/category_page.dart';
 import 'package:my_wallpaper_app/views/favourite_page.dart';
 import 'package:my_wallpaper_app/views/account_page.dart';
+import 'package:my_wallpaper_app/views/search-page.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/theme_view_model.dart';
 
@@ -67,7 +68,8 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(right: 20.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => FavouritePage()));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => FavouritePage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SearchImagePage()));
               },
               child: SvgPicture.asset(AppIcons.searchIcon,
                 width: 30,

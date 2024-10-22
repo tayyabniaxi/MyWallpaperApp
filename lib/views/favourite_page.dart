@@ -77,6 +77,7 @@ class _FavouritePageState extends State<FavouritePage> {
                               imageUrl: imageUrl,
                               isFavorite: true,
                               onFavoriteToggle: () {},
+                              image: [],
                             ),
                           ),
                         );

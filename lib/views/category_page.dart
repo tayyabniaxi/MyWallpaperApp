@@ -4,6 +4,7 @@ import 'package:my_wallpaper_app/utils/app-color.dart';
 import 'package:my_wallpaper_app/views/sub_category_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:my_wallpaper_app/widgets/full_screen_image_page.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/theme_view_model.dart';
 
@@ -251,14 +252,16 @@ class _CategoryPageState extends State<CategoryPage> {
                       child: Row(
                         children: displayedSubCategories.map((subCategory) {
                           return GestureDetector(
-                            onTap: () {
+                            onTap: () async{
+                              List<String> images = await _fetchSubcategoryImages(selectedCategory, subCategory);
+
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => SubcategoryPage(
                                     category: selectedCategory,
                                     subcategory: subCategory,
-                                    imageUrls: [],
+                                    imageUrls: images,
                                     isFavoriteList: [],
                                     subCategories: subCategories[selectedCategory]!,
                                   ),
@@ -311,15 +314,18 @@ class _CategoryPageState extends State<CategoryPage> {
                       padding: const EdgeInsets.only(left: 7),
                       child: Row(
                         children: subCategories[selectedCategory]!.skip(5).map(
-                              (subCategory) => GestureDetector(
-                            onTap: () {
+                              (subCategory) {
+                                return GestureDetector(
+                            onTap: () async{
+                              List<String> images = await _fetchSubcategoryImages(selectedCategory, subCategory);
+
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => SubcategoryPage(
                                     category: selectedCategory,
                                     subcategory: subCategory,
-                                    imageUrls: [],
+                                    imageUrls: images,
                                     isFavoriteList: [],
                                     subCategories: subCategories[selectedCategory]!,
                                   ),
@@ -360,17 +366,19 @@ class _CategoryPageState extends State<CategoryPage> {
                                 ],
                               ),
                             ),
-                          ),
+                          );
+                              },
                         ).toList(),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  // const SizedBox(height: 5),
                   Divider( color: Colors.grey.shade300,thickness: 1.2,),
                   // const SizedBox(height: 4),
 
                   Expanded(
-                    child: ListView.builder(
+                    child:
+                    ListView.builder(
                       controller: _scrollController,
                       itemCount: displayedSubCategories.length,
                       // itemCount: subCategories[selectedCategory]!.length,
@@ -449,24 +457,41 @@ class _CategoryPageState extends State<CategoryPage> {
                                         Expanded(
                                           child: ListView.builder(
                                             scrollDirection: Axis.horizontal,
-                                            itemCount: 5,
+                                            itemCount:images.length<=5? images.length: 5,
                                             itemBuilder: (context, imgIndex) {
                                               return Container(
                                                 width: 90,
                                                 margin: const EdgeInsets.symmetric(
                                                     horizontal: 4),
 
-                                                child: ClipRRect(
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: images[imgIndex],
-                                                    fit: BoxFit.cover,
-                                                    placeholder: (context, url) =>
-                                                        Container(
-                                                          color: Colors.grey[300],
-                                                        ),
-                                                    errorWidget: (context, url, error) =>
-                                                    const Icon(Icons.error),
+                                                child: GestureDetector(
+                                                   onTap: (){
+                                                     Navigator.push(
+                                                       context,
+                                                       MaterialPageRoute(
+                                                         builder: (context) => FullScreenImagePage(
+
+                                                           imageUrl: images[imgIndex],
+                                                           isFavorite: false,
+                                                           onFavoriteToggle: () {},
+                                                           image: images,
+
+                                                         ),
+                                                       ),
+                                                     );
+                                                   },
+                                                  child: ClipRRect(
+                                                    borderRadius: BorderRadius.circular(4),
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: images[imgIndex],
+                                                      fit: BoxFit.cover,
+                                                      placeholder: (context, url) =>
+                                                          Container(
+                                                            color: Colors.grey[300],
+                                                          ),
+                                                      errorWidget: (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                                    ),
                                                   ),
                                                 ),
                                               );
@@ -494,8 +519,6 @@ class _CategoryPageState extends State<CategoryPage> {
     );
   }
 
-
-
   Future<List<String>> _fetchSubcategoryImages(
       String category, String subcategory) async {
     final doc = await FirebaseFirestore.instance
@@ -506,10 +529,29 @@ class _CategoryPageState extends State<CategoryPage> {
         .get();
 
     if (doc.exists) {
-      return List<String>.from(doc.data()?['images'] ?? []);
+      // Extracting URLs from the new structure
+      List<dynamic> imagesData = doc.data()?['images'] ?? [];
+      return imagesData.map((imageMap) => imageMap['url'] as String).toList();
     }
     return [];
   }
+
+
+  // Future<List<String>> _fetchSubcategoryImages(
+  //     String category, String subcategory) async {
+  //   final doc = await FirebaseFirestore.instance
+  //       .collection('categories')
+  //       .doc(category)
+  //       .collection('subcategories')
+  //       .doc(subcategory)
+  //       .get();
+  //
+  //   if (doc.exists) {
+  //     return List<String>.from(doc.data()?['images'] ?? []);
+  //   }
+  //   return [];
+  // }
 }
+
 
 

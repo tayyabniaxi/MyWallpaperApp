@@ -97,10 +97,11 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Widget _buildList({required List<Map<String, dynamic>> items}) {
+  Widget _buildList({required List<Map<String, dynamic>> items , }) {
     return Column(
       children: items.map((item) {
         return ListTile(
+
           contentPadding: EdgeInsets.zero,
           title: Text(item['text']),
           trailing: const Icon(Icons.arrow_forward_ios),

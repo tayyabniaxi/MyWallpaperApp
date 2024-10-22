@@ -11,4 +11,6 @@ class AppColor{
   static const categorydarkThemeColorUnselect=Color(0xFF4C3D90);
   static const categorydarkThemeColorselect=Color(0xFF7B39FD);
   static const lightunSelect=Color(0xFFE5D7FF);
+
+  static const lightThemesubCategoryimageCountContainer=Color(0xffF3F3F3);
 }
